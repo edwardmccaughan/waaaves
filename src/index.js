@@ -1,17 +1,22 @@
 import 'phaser'
 import { SimpleScene } from './scenes/simple-scene';
-import { MidiController } from './midi'
 
 const gameConfig = {
   width: 640,
   height: 480,
+  physics: {
+    default: 'arcade',
+    arcade: {
+      gravity: { y: 500 },
+      debug: false 
+    }
+  },
   scene: SimpleScene
 }
 
-new Phaser.Game(gameConfig);
-new MidiController( (key) => { console.log(key)}, (key) => {} )
+var game = new Phaser.Game(gameConfig);
 
-// window.webmidi = WebMidi
+
 
 
 
