@@ -4651,6 +4651,11 @@ wbuf@^1.1.0, wbuf@^1.7.2:
   dependencies:
     minimalistic-assert "^1.0.0"
 
+webmidi@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/webmidi/-/webmidi-2.3.0.tgz#66e3c932eecd4a3d44b0d88e59c9621287fead1f"
+  integrity sha512-oh0iajHNagY2EKiaoImxVKZdzFWpc/0tiSLtoaw9WcAiaKCuJbWqBtoPxNL0/Lt2Ym5Q2WGnEyo0Z6DT/sWKcA==
+
 webpack-dev-middleware@1.12.2:
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/webpack-dev-middleware/-/webpack-dev-middleware-1.12.2.tgz#f8fc1120ce3b4fc5680ceecb43d777966b21105e"

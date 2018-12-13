@@ -1,5 +1,6 @@
 import 'phaser'
 import { SimpleScene } from './scenes/simple-scene';
+import { MidiController } from './midi'
 
 const gameConfig = {
   width: 640,
@@ -8,3 +9,10 @@ const gameConfig = {
 }
 
 new Phaser.Game(gameConfig);
+new MidiController
+
+// window.webmidi = WebMidi
+
+
+
+

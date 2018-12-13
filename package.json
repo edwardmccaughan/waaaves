@@ -9,6 +9,7 @@
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.7.0",
     "copy-webpack-plugin": "^4.6.0",
+    "webmidi": "^2.3.0",
     "webpack": "^3.0.0",
     "webpack-dev-server": "^2.0.0"
   },
