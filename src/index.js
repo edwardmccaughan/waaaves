@@ -9,7 +9,7 @@ const gameConfig = {
 }
 
 new Phaser.Game(gameConfig);
-new MidiController
+new MidiController( (key) => { console.log(key)}, (key) => {} )
 
 // window.webmidi = WebMidi
 
