@@ -8,7 +8,7 @@ export class SimpleScene extends Phaser.Scene {
   create() {
     this.decay_rate = 5
     this.x_scaling = 1200
-    this.y_scaling = 20
+    this.y_scaling = 80
     this.line_color = 0x00ffff
 
     this.prefill_note_levels()
@@ -57,22 +57,30 @@ export class SimpleScene extends Phaser.Scene {
   }
 
   calculate_circle(){
-    this.path = new Phaser.Curves.Path();
+    var circle_points = this.circle_points()
+    this.path = new Phaser.Curves.Path(circle_points[0][0],circle_points[0][1]);
+    this.circle_points().forEach((point) => { 
+      this.path.splineTo([point[0], point[1]]) ;
+    })
+    // this.path.closePath()
+  }
+
+  circle_points(){
+    var points = []
     for(var angle = 0; angle < 360; angle++) {
-      
       var real_sin = Object.keys(this.note_levels).reduce((memo, midi_key) => { 
        return  memo + this.note_amplitude(midi_key, angle)
       }, 0)
 
       var point = this.radiant_point(angle, real_sin) 
 
-      this.path.splineTo([point.x, point.y]) ;
+      points.push([point.x, point.y]) ;
     }
-
+    return points
   }
 
   radiant_point(angle, length) {
-    var start_offset = 100
+    var start_offset = 220
     var theta = this.toRadians(angle)
 
     var x_center = window.innerWidth /2;
