@@ -8,10 +8,10 @@ export class SimpleScene extends Phaser.Scene {
   }
 
   create() {
-    this.sin_layers = []
+    this.keys_down = []
     this.graphics = this.add.graphics()
 
-    new MidiController( (key) => { this.add_sin(key) }, (key) => { this.remove_sin(key)} )
+    new MidiController( (key) => { this.key_down(key) }, (key) => { this.key_up(key)} )
     new RealKeyboard()
   }
 
@@ -21,11 +21,11 @@ export class SimpleScene extends Phaser.Scene {
 
   line_test() {
     var path = new Phaser.Curves.Path(0, 100);
-    for(var n = 0; n < window.innerWidth; n++) {
-      var real_sin = this.sin_layers.reduce((memo, sin_layer) => memo + Math.sin(sin_layer * n / 400), 0);
+    for(var x = 0; x < window.innerWidth; x++) {
+      var real_sin = this.keys_down.reduce((memo, midi_key) => memo + this.note_amplitude(midi_key, x), 0);
       var y =  80 * real_sin + (window.innerHeight / 2)
       //console.log(n, y)
-      path.splineTo([n, y]) ;
+      path.splineTo([x, y]) ;
     }
 
     this.graphics.clear()
@@ -34,14 +34,18 @@ export class SimpleScene extends Phaser.Scene {
     path.draw(this.graphics);
   }
 
-
-  add_sin(key) {
-    this.sin_layers.push(key) 
+  note_amplitude(midi_key, x) {
+    return  Math.sin(note_frequencies[midi_key] * x / 600)
   }
 
-  remove_sin(key) {
+
+  key_down(key) {
+    this.keys_down.push(key) 
+  }
+
+  key_up(key) {
     // remove from the array, there's probably a more efficient way to do this
-    this.sin_layers = this.sin_layers.filter(item => item !== key )
+    this.keys_down = this.keys_down.filter(item => item !== key )
   }
 
 }
