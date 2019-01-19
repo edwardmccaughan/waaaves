@@ -12,7 +12,7 @@ export class SimpleScene extends Phaser.Scene {
     this.graphics = this.add.graphics()
 
     new MidiController( (key) => { this.key_down(key) }, (key) => { this.key_up(key)} )
-    new RealKeyboard()
+    new RealKeyboard( (key) => { this.key_down(key) }, (key) => { this.key_up(key)} )
   }
 
   update() {
