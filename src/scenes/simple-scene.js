@@ -8,7 +8,7 @@ export class SimpleScene extends Phaser.Scene {
   }
 
   create() {
-    this.colas = []
+    this.sin_layers = [0.1, 0.2]
     this.line_test()
     new MidiController( (key) => { this.add_cola(key) }, (key) => {} )
     new RealKeyboard()
@@ -22,7 +22,13 @@ export class SimpleScene extends Phaser.Scene {
     var path = new Phaser.Curves.Path(0, 100);
     // var sine_points = Array.from({length: 360}, (x,i) => i).map((x) => { return 5 * Math.sin(x) })
     for(var n = 0; n < window.innerWidth; n++) {
-      var y =  100 * Math.sin(0.1 * n) + (window.innerHeight / 2)
+
+      // var y =  100 * Math.sin(0.1 * n) + (window.innerHeight / 2)
+      
+
+      // var real_sin = Math.sin(0.1 * n) + Math.sin(0.2 * n)
+      var real_sin = this.sin_layers.reduce((memo, sin_layer) => memo + Math.sin(sin_layer * n), 0);
+      var y =  100 * real_sin + (window.innerHeight / 2)
       console.log(n, y)
       path.splineTo([n, y]) ;
     }
