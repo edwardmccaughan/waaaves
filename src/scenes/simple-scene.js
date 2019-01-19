@@ -7,8 +7,10 @@ export class SimpleScene extends Phaser.Scene {
 
   create() {
     this.decay_rate = 5
+    this.attack_rate = 10
     this.x_scaling = 1200
     this.y_scaling = 70
+    this.max_radius = 70
     this.circle_start_offset = 200
     this.line_color = 0x00ffff
 
@@ -29,6 +31,10 @@ export class SimpleScene extends Phaser.Scene {
       if(this.note_levels[key] > 0 && !this.notes_pressed[key]){
         this.note_levels[key] -= this.decay_rate
       }
+
+      if(this.notes_pressed[key] && this.note_levels[key] < this.max_radius){
+        this.note_levels[key] += this.attack_rate
+      }
     })
   }
 
@@ -45,11 +51,11 @@ export class SimpleScene extends Phaser.Scene {
     this.path = new Phaser.Curves.Path();
     for(var x = 0; x < window.innerWidth; x++) {
       
-      var real_sin = Object.keys(this.note_levels).reduce((memo, midi_key) => { 
+      var combined_sin_amplitudes = Object.keys(this.note_levels).reduce((memo, midi_key) => { 
        return  memo + this.note_amplitude(midi_key, x)
       }, 0)
 
-      var y = real_sin + (window.innerHeight / 2)
+      var y = combined_sin_amplitudes + (window.innerHeight / 2)
 
       this.path.splineTo([x, y]) ;
     }
@@ -63,22 +69,17 @@ export class SimpleScene extends Phaser.Scene {
     })
     // TODO: this is bad :-p it should cycle eventually
     // but either it doesn't cycle every 360 degrees, or I don't understand the math
-    this.path.closePath()
-  }
-
-  line_points() {
-
-
+    // this.path.closePath()
   }
 
   circle_points(){
     var points = []
     for(var angle = 0; angle < 360; angle++) {
-      var real_sin = Object.keys(this.note_levels).reduce((memo, midi_key) => { 
+      var combined_sin_amplitudes = Object.keys(this.note_levels).reduce((memo, midi_key) => { 
        return  memo + this.note_amplitude(midi_key, angle)
       }, 0)
 
-      var point = this.radiant_point(angle, real_sin) 
+      var point = this.radiant_point(angle, combined_sin_amplitudes) 
 
       points.push([point.x, point.y]) ;
     }
@@ -121,7 +122,6 @@ export class SimpleScene extends Phaser.Scene {
 
   key_down(key) {
     this.notes_pressed[key] = true
-    this.note_levels[key] = this.y_scaling
   }
 
   key_up(key) {
