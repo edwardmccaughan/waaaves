@@ -11,7 +11,7 @@ export class MidiController {
       if(err) { console.log(err) }
 
       this.keyboards = new Keyboards()    
-      this.setup_interaction_midi(this.keyboards.vmpk())
+      this.setup_interaction_midi(this.keyboards.keystation_mini())
 
       console.log(WebMidi.outputs) 
     })
