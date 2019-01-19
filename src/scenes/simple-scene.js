@@ -1,53 +1,47 @@
 import { MidiController } from '../midi'
 import { RealKeyboard } from '../real_keyboard'
-
+import { note_frequencies } from '../note_frequencies'
 
 export class SimpleScene extends Phaser.Scene {
   preload() {
-    this.load.image('cokecan', 'assets/cokecan.png');
+    console.log(note_frequencies)
   }
 
   create() {
-    this.sin_layers = [0.1, 0.2]
-    this.line_test()
-    new MidiController( (key) => { this.add_cola(key) }, (key) => {} )
+    this.sin_layers = []
+    this.graphics = this.add.graphics()
+
+    new MidiController( (key) => { this.add_sin(key) }, (key) => { this.remove_sin(key)} )
     new RealKeyboard()
   }
 
   update() {
-    // this.line_test()
-
+    this.line_test()
   }
+
   line_test() {
     var path = new Phaser.Curves.Path(0, 100);
-    // var sine_points = Array.from({length: 360}, (x,i) => i).map((x) => { return 5 * Math.sin(x) })
     for(var n = 0; n < window.innerWidth; n++) {
-
-      // var y =  100 * Math.sin(0.1 * n) + (window.innerHeight / 2)
-      
-
-      // var real_sin = Math.sin(0.1 * n) + Math.sin(0.2 * n)
-      var real_sin = this.sin_layers.reduce((memo, sin_layer) => memo + Math.sin(sin_layer * n), 0);
-      var y =  100 * real_sin + (window.innerHeight / 2)
-      console.log(n, y)
+      var real_sin = this.sin_layers.reduce((memo, sin_layer) => memo + Math.sin(sin_layer * n / 400), 0);
+      var y =  80 * real_sin + (window.innerHeight / 2)
+      //console.log(n, y)
       path.splineTo([n, y]) ;
     }
-    
 
-    var graphics = this.add.graphics()
-    graphics.lineStyle(2, 0x00ffff, 1);
+    this.graphics.clear()
 
-    path.draw(graphics);
+    this.graphics.lineStyle(2, 0x00ffff, 1);
+    path.draw(this.graphics);
   }
 
 
-  add_cola(x) {
-    console.log(x)
-    var cola = this.physics.add.sprite(x * 6, 0, 'cokecan');
-    window.cola = cola
-    cola.setBounce(0.5);
-    cola.setCollideWorldBounds(true);
-    this.colas.push(cola)
+  add_sin(key) {
+    this.sin_layers.push(key) 
+  }
+
+  remove_sin(key) {
+    // remove from the array, there's probably a more efficient way to do this
+    this.sin_layers = this.sin_layers.filter(item => item !== key )
   }
 
 }

@@ -1,4 +1,4 @@
-export { 
+export const note_frequencies = [
   16.35,
   17.32,
   18.35,
@@ -107,4 +107,4 @@ export {
   7040,
   7458.62,
   7902.13
-}
+]
