@@ -8,7 +8,8 @@ export class SimpleScene extends Phaser.Scene {
   create() {
     this.decay_rate = 5
     this.x_scaling = 1200
-    this.y_scaling = 80
+    this.y_scaling = 70
+    this.circle_start_offset = 200
     this.line_color = 0x00ffff
 
     this.prefill_note_levels()
@@ -40,7 +41,6 @@ export class SimpleScene extends Phaser.Scene {
     }
   } 
 
-
   calculate_line() {
     this.path = new Phaser.Curves.Path();
     for(var x = 0; x < window.innerWidth; x++) {
@@ -53,7 +53,6 @@ export class SimpleScene extends Phaser.Scene {
 
       this.path.splineTo([x, y]) ;
     }
-    // maybe also close path
   }
 
   calculate_circle(){
@@ -62,7 +61,14 @@ export class SimpleScene extends Phaser.Scene {
     this.circle_points().forEach((point) => { 
       this.path.splineTo([point[0], point[1]]) ;
     })
-    // this.path.closePath()
+    // TODO: this is bad :-p it should cycle eventually
+    // but either it doesn't cycle every 360 degrees, or I don't understand the math
+    this.path.closePath()
+  }
+
+  line_points() {
+
+
   }
 
   circle_points(){
@@ -80,13 +86,12 @@ export class SimpleScene extends Phaser.Scene {
   }
 
   radiant_point(angle, length) {
-    var start_offset = 220
     var theta = this.toRadians(angle)
 
     var x_center = window.innerWidth /2;
     var y_center = window.innerHeight /2;
-    var x = x_center + (start_offset + length) * Math.cos(theta)
-    var y = y_center + (start_offset + length) * Math.sin(theta)
+    var x = x_center + (this.circle_start_offset + length) * Math.cos(theta)
+    var y = y_center + (this.circle_start_offset + length) * Math.sin(theta)
 
     return {x: x, y: y}
   }
