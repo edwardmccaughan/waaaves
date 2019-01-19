@@ -8,7 +8,7 @@ export class SimpleScene extends Phaser.Scene {
   create() {
     this.decay_rate = 5
     this.x_scaling = 1200
-    this.y_scaling = 100
+    this.y_scaling = 20
     this.line_color = 0x00ffff
 
     this.prefill_note_levels()
@@ -42,7 +42,7 @@ export class SimpleScene extends Phaser.Scene {
 
 
   calculate_line() {
-    this.path = new Phaser.Curves.Path(0, window.innerHeight / 2);
+    this.path = new Phaser.Curves.Path();
     for(var x = 0; x < window.innerWidth; x++) {
       
       var real_sin = Object.keys(this.note_levels).reduce((memo, midi_key) => { 
@@ -53,10 +53,47 @@ export class SimpleScene extends Phaser.Scene {
 
       this.path.splineTo([x, y]) ;
     }
+    // maybe also close path
+  }
+
+  calculate_circle(){
+    this.path = new Phaser.Curves.Path();
+    for(var angle = 0; angle < 360; angle++) {
+      
+      var real_sin = Object.keys(this.note_levels).reduce((memo, midi_key) => { 
+       return  memo + this.note_amplitude(midi_key, angle)
+      }, 0)
+
+      var point = this.radiant_point(angle, real_sin) 
+
+      this.path.splineTo([point.x, point.y]) ;
+    }
+
+  }
+
+  radiant_point(angle, length) {
+    var start_offset = 100
+    var theta = this.toRadians(angle)
+
+    var x_center = window.innerWidth /2;
+    var y_center = window.innerHeight /2;
+    var x = x_center + (start_offset + length) * Math.cos(theta)
+    var y = y_center + (start_offset + length) * Math.sin(theta)
+
+    return {x: x, y: y}
+  }
+
+
+  toDegrees (angle) {
+    return angle * (180 / Math.PI);
+  }
+
+  toRadians (angle) {
+    return angle * (Math.PI / 180);
   }
 
   draw_line() {
-    this.calculate_line()
+    this.calculate_circle()
     this.graphics.clear()
 
     this.graphics.lineStyle(2, this.line_color, 1);
@@ -68,7 +105,6 @@ export class SimpleScene extends Phaser.Scene {
     var scaled_amplitude = raw_amplitude * this.note_levels[midi_key]
     return scaled_amplitude
   }
-
 
   key_down(key) {
     this.notes_pressed[key] = true
