@@ -1,4 +1,6 @@
 import { MidiController } from '../midi'
+import { RealKeyboard } from '../real_keyboard'
+
 
 export class SimpleScene extends Phaser.Scene {
   preload() {
@@ -9,6 +11,7 @@ export class SimpleScene extends Phaser.Scene {
     this.colas = []
 
     new MidiController( (key) => { this.add_cola(key) }, (key) => {} )
+    new RealKeyboard()
   }
 
   add_cola(x) {

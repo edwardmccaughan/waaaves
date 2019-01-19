@@ -18,6 +18,11 @@ export class MidiController {
   }
 
   setup_interaction_midi(keyboard){
+    if(!keyboard) {
+      console.error('couldnt find interaction keyboard!')
+      return
+    }
+
     console.log("setting up midi keyboard for interaction", keyboard, keyboard.name)
     
     keyboard.addListener('noteon', "all", (e) => {
