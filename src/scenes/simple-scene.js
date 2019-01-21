@@ -13,6 +13,7 @@ export class SimpleScene extends Phaser.Scene {
     this.max_radius = 70
     this.circle_start_offset = 200
     this.line_color = 0x00ffff
+    this.fill_color = 0x006a6a;
 
     this.prefill_note_levels()
     this.graphics = this.add.graphics()
@@ -67,14 +68,15 @@ export class SimpleScene extends Phaser.Scene {
     this.circle_points().forEach((point) => { 
       this.path.splineTo([point[0], point[1]]) ;
     })
-    // TODO: this is bad :-p it should cycle eventually
-    // but either it doesn't cycle every 360 degrees, or I don't understand the math
-    // this.path.closePath()
+    // TODO: figure out a better way to make the path close in a pretty way
+    this.path.closePath()
   }
 
   circle_points(){
     var points = []
-    for(var angle = 0; angle < 360; angle++) {
+    // start from 90 degrees, so the gap starts at the bottom
+    var start_angle = 90;
+    for(var angle = start_angle; angle < start_angle + 360; angle++) {
       var combined_sin_amplitudes = Object.keys(this.note_levels).reduce((memo, midi_key) => { 
        return  memo + this.note_amplitude(midi_key, angle)
       }, 0)
