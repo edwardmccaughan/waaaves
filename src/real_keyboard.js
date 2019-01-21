@@ -1,7 +1,7 @@
 export class RealKeyboard {
   constructor(scene_keydown_handler, scene_keyup_handler) {
     this.fullscreen_handler()
-    
+    this.switch_page_from_keyboard()
     this.scene_keyup_handler = scene_keyup_handler
     this.scene_keydown_handler = scene_keydown_handler
 
@@ -11,8 +11,30 @@ export class RealKeyboard {
     window.addEventListener("keyup", this.upHandler.bind(this), false);
   }
 
+  switch_page_from_keyboard(){
+    window.addEventListener("keydown", (event) => {
+      var pages = {
+          Digit0: "between_worlds",
+          Digit1: "candelabra",
+          Digit2: "pixi_radiant",
+          Digit3: "so_many_vs",
+          Digit4: "voronoi_sparkles",
+          Digit5: "walkers",
+          Digit6: "waaaaaaves"
+      }
+      var page = pages[event.code]
+
+      if(page) {
+        var url = "/" + page
+        window.location = url
+      }
+
+    }, false);
+  }
+
+
   fullscreen_handler() {
-    document.addEventListener('keypress', (e) => {
+    window.addEventListener('keypress', (e) => {
       if(e.code == 'Digit9') {
         document.documentElement.webkitRequestFullScreen()
       } else if (e.code == 'Digit0') {

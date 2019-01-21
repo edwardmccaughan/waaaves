@@ -12,8 +12,7 @@ export class MidiController {
 
       this.keyboards = new Keyboards()    
       this.setup_interaction_midi(this.keyboards.alessis())
-
-      console.log(WebMidi.outputs) 
+      this.setup_page_switcher_midi(this.keyboards.keystation_mini())
     })
   }
 
@@ -36,6 +35,40 @@ export class MidiController {
       console.log("interaction released:", e.data[1] )
       this.key_released(key)
     });
+  }
+
+  setup_page_switcher_midi(keyboard){
+    if(!keyboard) {
+      console.error('couldnt find page switcher keyboard!')
+      return
+    }
+
+    console.log("setting up midi for page switcher", keyboard, keyboard.name)
+
+    keyboard.addListener('noteon', "all", (e) => {
+      var key = e.data[1]
+      console.log("page switcher pressed:", key )
+      this.switch_page(key)
+    });
+  }
+
+  switch_page(key) {
+    var pages = {
+        48: "between_worlds",
+        50: "candelabra",
+        52: "pixi_radiant",
+        53: "so_many_vs",
+        55: "voronoi_sparkles",
+        57: "walkers",
+        59: "waaaaaaves"
+    }
+
+    var page = pages[key]
+
+    if(page) {
+      var url = "/" + page
+      window.location = url
+    }
   }
 
   key_to_x(key) {

@@ -5,5 +5,5 @@ useful commands:
   * `yarn run webpack-dev-server`
 
 TODO:
-  * gitignore
-  * maybe make the lines glow
+  * fix the fullscreen hotkey, it doesn't work across reloads
+  * figure out how to share keyboard logic between projects
