@@ -11,7 +11,8 @@
     "copy-webpack-plugin": "^4.6.0",
     "webmidi": "^2.3.0",
     "webpack": "^3.0.0",
-    "webpack-dev-server": "^2.0.0"
+    "webpack-dev-server": "^2.0.0",
+    "tone": "next"
   },
   "dependencies": {
     "phaser": "^3.0.0"

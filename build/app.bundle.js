@@ -15,6 +15,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _midi = __webpack_require__(1150);
 
+var _real_keyboard = __webpack_require__(1152);
+
+var _note_frequencies = __webpack_require__(1153);
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -33,28 +37,65 @@ var SimpleScene = exports.SimpleScene = function (_Phaser$Scene) {
   _createClass(SimpleScene, [{
     key: 'preload',
     value: function preload() {
-      this.load.image('cokecan', 'assets/cokecan.png');
+      console.log(_note_frequencies.note_frequencies);
     }
   }, {
     key: 'create',
     value: function create() {
       var _this2 = this;
 
-      this.colas = [];
+      this.keys_down = [];
+      this.graphics = this.add.graphics();
 
       new _midi.MidiController(function (key) {
-        _this2.add_cola(key);
-      }, function (key) {});
+        _this2.key_down(key);
+      }, function (key) {
+        _this2.key_up(key);
+      });
+      new _real_keyboard.RealKeyboard();
     }
   }, {
-    key: 'add_cola',
-    value: function add_cola(x) {
-      console.log(x);
-      var cola = this.physics.add.sprite(x * 6, 0, 'cokecan');
-      window.cola = cola;
-      cola.setBounce(0.5);
-      cola.setCollideWorldBounds(true);
-      this.colas.push(cola);
+    key: 'update',
+    value: function update() {
+      this.line_test();
+    }
+  }, {
+    key: 'line_test',
+    value: function line_test() {
+      var _this3 = this;
+
+      var path = new Phaser.Curves.Path(0, 100);
+      for (var x = 0; x < window.innerWidth; x++) {
+        var real_sin = this.keys_down.reduce(function (memo, midi_key) {
+          return memo + _this3.note_amplitude(midi_key, x);
+        }, 0);
+        var y = 80 * real_sin + window.innerHeight / 2;
+        //console.log(n, y)
+        path.splineTo([x, y]);
+      }
+
+      this.graphics.clear();
+
+      this.graphics.lineStyle(2, 0x00ffff, 1);
+      path.draw(this.graphics);
+    }
+  }, {
+    key: 'note_amplitude',
+    value: function note_amplitude(midi_key, x) {
+      return Math.sin(_note_frequencies.note_frequencies[midi_key] * x / 600);
+    }
+  }, {
+    key: 'key_down',
+    value: function key_down(key) {
+      this.keys_down.push(key);
+    }
+  }, {
+    key: 'key_up',
+    value: function key_up(key) {
+      // remove from the array, there's probably a more efficient way to do this
+      this.keys_down = this.keys_down.filter(function (item) {
+        return item !== key;
+      });
     }
   }]);
 
@@ -102,7 +143,7 @@ var MidiController = exports.MidiController = function () {
       }
 
       _this.keyboards = new _keyboards.Keyboards();
-      _this.setup_interaction_midi(_this.keyboards.vmpk());
+      _this.setup_interaction_midi(_this.keyboards.keystation_mini());
 
       console.log(_webmidi2.default.outputs);
     });
@@ -112,6 +153,11 @@ var MidiController = exports.MidiController = function () {
     key: 'setup_interaction_midi',
     value: function setup_interaction_midi(keyboard) {
       var _this2 = this;
+
+      if (!keyboard) {
+        console.error('couldnt find interaction keyboard!');
+        return;
+      }
 
       console.log("setting up midi keyboard for interaction", keyboard, keyboard.name);
 
@@ -170,23 +216,28 @@ var Keyboards = exports.Keyboards = function () {
     key: "find_by_name",
     value: function find_by_name(name) {
       return _webmidi2.default.inputs.filter(function (input) {
-        return input.name == name;
+        return input.name.includes(name);
       });
     }
   }, {
     key: "alessis",
     value: function alessis() {
-      return this.find_by_name("Alesis Recital MIDI 1")[0];
+      return this.find_by_name("Alesis Recital")[0];
     }
   }, {
     key: "garage_key",
     value: function garage_key() {
-      return this.find_by_name("GarageKey mini MIDI 1")[0];
+      return this.find_by_name("GarageKey mini")[0];
+    }
+  }, {
+    key: "keystation_mini",
+    value: function keystation_mini() {
+      return this.find_by_name("Keystation Mini 32")[0];
     }
   }, {
     key: "yamaha",
     value: function yamaha() {
-      return this.find_by_name("Digital Piano MIDI 1")[0];
+      return this.find_by_name("Digital Piano")[0];
     }
   }, {
     key: "vmpk",
@@ -209,6 +260,48 @@ var Keyboards = exports.Keyboards = function () {
 
   return Keyboards;
 }();
+
+/***/ }),
+
+/***/ 1152:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var RealKeyboard = exports.RealKeyboard = function RealKeyboard() {
+  _classCallCheck(this, RealKeyboard);
+
+  document.addEventListener('keypress', function (e) {
+    if (e.code == 'Digit9') {
+      document.documentElement.webkitRequestFullScreen();
+    } else if (e.code == 'Digit0') {
+      document.webkitExitFullscreen();
+    }
+    console.log(e.code);
+  });
+};
+
+/***/ }),
+
+/***/ 1153:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var note_frequencies = exports.note_frequencies = [16.35, 17.32, 18.35, 19.45, 20.6, 21.83, 23.12, 24.5, 25.96, 27.5, // lowest piano note
+29.14, 30.87, 32.7, 34.65, 36.71, 38.89, 41.2, 43.65, 46.25, 49, 51.91, 55, 58.27, 61.74, 65.41, 69.3, 73.42, 77.78, 82.41, 87.31, 92.5, 98, 103.83, 110, 116.54, 123.47, 130.81, 138.59, 146.83, 155.56, 164.81, 174.61, 185, 196, 207.65, 220, 233.08, 246.94, 261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392, 415.3, 440, 466.16, 493.88, 523.25, 554.37, 587.33, 622.25, 659.25, 698.46, 739.99, 783.99, 830.61, 880, 932.33, 987.77, 1046.5, 1108.73, 1174.66, 1244.51, 1318.51, 1396.91, 1479.98, 1567.98, 1661.22, 1760, 1864.66, 1975.53, 2093, 2217.46, 2349.32, 2489.02, 2637.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520, 3729.31, 3951.07, 4186.01, // highest piano note
+4434.92, 4698.63, 4978.03, 5274.04, 5587.65, 5919.91, 6271.93, 6644.88, 7040, 7458.62, 7902.13];
 
 /***/ }),
 
@@ -261,8 +354,10 @@ __webpack_require__(220);
 var _simpleScene = __webpack_require__(1149);
 
 var gameConfig = {
-  width: 640,
-  height: 480,
+  // this might not work on high dpi devices like retina screens
+  // since they have 2x pixel density
+  width: window.innerWidth,
+  height: window.innerHeight,
   physics: {
     default: 'arcade',
     arcade: {
