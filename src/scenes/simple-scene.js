@@ -2,11 +2,8 @@ import { MidiController } from '../midi'
 import { RealKeyboard } from '../real_keyboard'
 import { note_frequencies } from '../note_frequencies'
 import { note_names } from '../note_names'
+import { Synth } from '../synth'
 
-window.Tone = require('tone')
-console.log(Tone)
-
-var polySynth = new Tone.PolySynth(88, Tone.AMSynth).toMaster();
 
 export class SimpleScene extends Phaser.Scene {
   preload() {}
@@ -26,6 +23,7 @@ export class SimpleScene extends Phaser.Scene {
 
     new MidiController( (key) => { this.key_down(key) }, (key) => { this.key_up(key)} )
     new RealKeyboard( (key) => { this.key_down(key) }, (key) => { this.key_up(key)} )
+    this.synth = new Synth(false)
   }
 
   update() {
@@ -128,19 +126,15 @@ export class SimpleScene extends Phaser.Scene {
     return scaled_amplitude
   }
 
-  key_down(key) {
+  key_down(key) {    
     if (!this.notes_pressed[key]) {
-      // this.keys_down.push(key)
-      polySynth.triggerAttack([note_names[key]])
-      console.log('playing note:', note_names[key])
-    }
-    
-    this.notes_pressed[key] = true
+      this.notes_pressed[key] = true
+      this.synth.key_down(key)
+    }   
   }
 
   key_up(key) {
     this.notes_pressed[key] = false
-    polySynth.triggerRelease([note_names[key]])
-    console.log('stopping note:', note_names[key])   
+    this.synth.key_up(key)  
   }
 }
