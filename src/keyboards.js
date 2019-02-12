@@ -34,4 +34,10 @@ export class Keyboards {
   everything_but_garage_key(){
     return WebMidi.inputs.filter(function(input){ return input != keyboards.garage_key()})
   }
+
+  everything_but_mini_keyboards(){
+    return WebMidi.inputs.filter((input) => {
+      return ![this.garage_key(), this.keystation_mini()].includes(input)
+    })
+  }
 }

@@ -23,7 +23,7 @@ export class SimpleScene extends Phaser.Scene {
 
     new MidiController( (key) => { this.key_down(key) }, (key) => { this.key_up(key)} )
     new RealKeyboard( (key) => { this.key_down(key) }, (key) => { this.key_up(key)} )
-    this.synth = new Synth(false)
+    this.synth = new Synth(false);
   }
 
   update() {

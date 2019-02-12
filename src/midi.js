@@ -11,8 +11,12 @@ export class MidiController {
       if(err) { console.log(err) }
 
       this.keyboards = new Keyboards()    
-      this.setup_interaction_midi(this.keyboards.alessis())
       this.setup_page_switcher_midi(this.keyboards.keystation_mini())
+
+      this.keyboards.everything_but_mini_keyboards().forEach((keyboard) => {
+        this.setup_interaction_midi(keyboard)
+      })
+      // this.setup_interaction_midi(this.keyboards.everything_but_mini_keyboards())
     })
   }
 
@@ -60,7 +64,9 @@ export class MidiController {
         53: "so_many_vs",
         55: "voronoi_sparkles",
         57: "walkers",
-        59: "waaaaaaves"
+        59: "waaaaaaves",
+        60: "spiralize",
+        62: "dots_everywhere"
     }
 
     var page = pages[key]
